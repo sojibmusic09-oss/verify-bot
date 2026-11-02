@@ -1,7 +1,7 @@
 {
-  "name": "st-tournament-whatsapp-otp-server",
-  "version": "1.0.0",
-  "description": "WhatsApp OTP & Automated Mailer Engine for ST TOURNAMENT BD",
+  "name": "st-tournament-whatsapp-render-server",
+  "version": "2.0.0",
+  "description": "Enterprise Anti-Ban WhatsApp OTP Engine with Live Web Terminal",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -12,7 +12,6 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "nodemailer": "^6.9.13",
     "pino": "^9.0.0",
     "qrcode": "^1.5.3"
   },
