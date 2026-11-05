@@ -70,14 +70,14 @@ async function startWhatsAppBot() {
       logger: pino({ level: 'silent' }),
       auth: state,
       printQRInTerminal: false,
-      browser: Browsers.ubuntu('Chrome'),
+      browser: Browsers.macOS('Desktop'),
       syncFullHistory: false,
-      markOnlineOnConnect: true,
+      markOnlineOnConnect: false, // অলওয়েজ অনলাইন ফোর্স বন্ধ করা হলো
       connectTimeoutMs: 60000,
-      keepAliveIntervalMs: 25000,
+      keepAliveIntervalMs: 30000,
       emitOwnEvents: false,
-      retryRequestDelayMs: 600,
-      maxMsgRetryCount: 4
+      retryRequestDelayMs: 1500,
+      maxMsgRetryCount: 2
     });
 
     sock.ev.on('creds.update', saveCreds);
@@ -98,8 +98,8 @@ async function startWhatsAppBot() {
         appendLog('warn', `WhatsApp সংযোগ বিচ্ছিন্ন হয়েছে (Status Code: ${statusCode})`);
 
         if (statusCode !== DisconnectReason.loggedOut) {
-          appendLog('info', '৫ সেকেন্ড পর পুনরায় স্বয়ংক্রিয় কানেক্ট করার চেষ্টা করা হবে...');
-          setTimeout(() => startWhatsAppBot(), 5000);
+          appendLog('info', '১২ সেকেন্ড পর পুনরায় স্বয়ংক্রিয় কানেক্ট করার চেষ্টা করা হবে...');
+          setTimeout(() => startWhatsAppBot(), 12000);
         } else {
           appendLog('error', 'সেশন লগআউট হয়ে গেছে! নম্বর পরিবর্তনের জন্য Re-link করুন।');
         }
@@ -151,10 +151,12 @@ async function startWhatsAppBot() {
 
           appendLog('info', `ওটিপি তৈরি হয়েছে: ${otpCode} (প্রেরক: ${cleanSenderNum})`);
 
-          // 🛡️ ANTI-BAN HUMAN LIKE DELAY: টাইপিং স্টেটাস অনুকরণ
+          // 🛡️ ANTI-BAN: মেসেজ রিড (নীল টিক) ও র‍্যান্ডম হিউম্যান টাইপিং
           try {
+            await sock.readMessages([msg.key]); // মেসেজ সিন মার্ক করা
+            await delay(1200 + Math.random() * 1000); 
             await sock.sendPresenceUpdate('composing', sender);
-            await delay(1500); // ১.৫ সেকেন্ড টাইপিং অ্যানিমেশন
+            await delay(2500 + Math.random() * 2000); // ২.৫ থেকে ৪.৫ সেকেন্ড টাইপিং অ্যানিমেশন
           } catch(e) {}
 
           const replyMsg = `*ST TOURNAMENT BD - পার্টনার ভেরিফিকেশন*\n━━━━━━━━━━━━━━━━━━━━\nআপনার ওটিপি কোড হলো: *${otpCode}*\n\n🔒 এই কোডটি কাউকে বলবেন না। সাইটে কোডটি বসিয়ে আপনার ভেরিফিকেশন নিশ্চিত করুন।\n━━━━━━━━━━━━━━━━━━━━\n_Anti-Ban Official Verification System_`;
